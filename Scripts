@@ -1,5 +1,3 @@
-// Ejemplo de script para el sistema de scripts de Debentialc
-// Este script se ejecuta cuando un jugador usa un item con script asociado
 
 // Variables disponibles automáticamente:
 // - player: El jugador que usó el item (org.bukkit.entity.Player)
