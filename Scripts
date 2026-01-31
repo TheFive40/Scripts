@@ -1,0 +1,152 @@
+// Ejemplo de script para el sistema de scripts de Debentialc
+// Este script se ejecuta cuando un jugador usa un item con script asociado
+
+// Variables disponibles automáticamente:
+// - player: El jugador que usó el item (org.bukkit.entity.Player)
+// - server: El servidor (org.bukkit.Server)
+// - location: La ubicación del jugador (org.bukkit.Location)
+// - item: El item usado (org.bukkit.inventory.ItemStack)
+// - world: El mundo actual (org.bukkit.World)
+
+// Importar clases de Java/Bukkit si es necesario
+var Bukkit = Packages.org.bukkit.Bukkit;
+var Sound = Packages.org.bukkit.Sound;
+var Material = Packages.org.bukkit.Material;
+var ItemStack = Packages.org.bukkit.inventory.ItemStack;
+
+// ==========================================
+// EJEMPLO 1: Mensaje simple al jugador
+// ==========================================
+function saludar() {
+    player.sendMessage("§a¡Hola " + player.getName() + "!");
+    player.sendMessage("§7Has usado un item con script asociado");
+}
+
+// ==========================================
+// EJEMPLO 2: Dar items al jugador
+// ==========================================
+function darItems() {
+    var diamantes = new ItemStack(Material.DIAMOND, 10);
+    player.getInventory().addItem(diamantes);
+    player.sendMessage("§a✓ Has recibido 10 diamantes");
+}
+
+// ==========================================
+// EJEMPLO 3: Efectos de sonido y visuales
+// ==========================================
+function efectos() {
+    // Sonido
+    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0, 1.0);
+    
+    // Rayo visual (no daña)
+    world.strikeLightningEffect(location);
+    
+    // Mensaje
+    player.sendMessage("§b⚡ ¡PODER ACTIVADO!");
+}
+
+// ==========================================
+// EJEMPLO 4: Teleportación
+// ==========================================
+function teletransportar() {
+    var spawn = world.getSpawnLocation();
+    player.teleport(spawn);
+    player.sendMessage("§7Teletransportado al spawn");
+}
+
+// ==========================================
+// EJEMPLO 5: Ejecutar comandos como consola
+// ==========================================
+function ejecutarComandos() {
+    var nombreJugador = player.getName();
+    
+    // Ejecutar comando como consola
+    Bukkit.dispatchCommand(
+        Bukkit.getConsoleSender(),
+        "give " + nombreJugador + " diamond 5"
+    );
+    
+    player.sendMessage("§a✓ Comando ejecutado");
+}
+
+// ==========================================
+// EJEMPLO 6: Detectar y modificar entorno
+// ==========================================
+function modificarEntorno() {
+    // Cambiar clima
+    world.setStorm(false);
+    world.setThundering(false);
+    
+    // Cambiar hora
+    world.setTime(1000); // Día
+    
+    player.sendMessage("§e☀ ¡Día soleado activado!");
+}
+
+// ==========================================
+// EJEMPLO 7: Iteracción con otros jugadores
+// ==========================================
+function curarCercanos() {
+    var jugadores = world.getPlayers();
+    var curados = 0;
+    
+    for (var i = 0; i < jugadores.size(); i++) {
+        var otroJugador = jugadores.get(i);
+        
+        // Si está cerca (10 bloques)
+        if (otroJugador.getLocation().distance(location) <= 10) {
+            otroJugador.setHealth(otroJugador.getMaxHealth());
+            otroJugador.sendMessage("§a✓ Has sido curado");
+            curados++;
+        }
+    }
+    
+    player.sendMessage("§a✓ Curaste a " + curados + " jugador(es)");
+}
+
+// ==========================================
+// EJEMPLO 8: Sistema de cooldown
+// ==========================================
+var cooldowns = {}; // Map global de cooldowns
+
+function conCooldown() {
+    var uuid = player.getUniqueId().toString();
+    var ahora = Date.now();
+    
+    // Verificar si está en cooldown (30 segundos = 30000ms)
+    if (cooldowns[uuid] && (ahora - cooldowns[uuid]) < 30000) {
+        var restante = Math.ceil((30000 - (ahora - cooldowns[uuid])) / 1000);
+        player.sendMessage("§c✗ Cooldown: " + restante + "s restantes");
+        return;
+    }
+    
+    // Ejecutar acción
+    player.sendMessage("§a✓ Habilidad activada");
+    darItems();
+    efectos();
+    
+    // Guardar timestamp
+    cooldowns[uuid] = ahora;
+}
+
+// ==========================================
+// FUNCIÓN PRINCIPAL - PUNTO DE ENTRADA
+// ==========================================
+function main() {
+    // Aquí va la lógica principal del script
+    // Elige qué función ejecutar o combina varias
+    
+    player.sendMessage("§5§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+    player.sendMessage("§5§lScript Ejecutado");
+    player.sendMessage("§5§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+    
+    // Ejecutar función de ejemplo
+    saludar();
+    efectos();
+    
+    // Para cooldown, descomentar:
+    // conCooldown();
+}
+
+// EJECUTAR SCRIPT
+main();
